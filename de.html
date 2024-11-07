@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Dispenser</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <style>
+        body {
+            background-image: url('Book.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .text-1 {
+            text-align: left;
+            color:black;
+            font-family:"Times New Roman", Times, serif;
+            font-size: 15px; 
+            margin-top:0%;
+        }
+        .text-2 {
+            color:rgb(84, 83, 83);
+            font-family:'Nunito';
+            font-size: 40px;
+            margin-top:0%;
+        }
+        .text-3 {
+            color:gray;
+            font-family:"Times New Roman", Times, serif;
+            font-size: 10px;
+            margin-top:0%;
+        }
+        .text-4 {
+            color:white;
+            font-family:'Times New Roman', Times, serif;
+            font-size: 50px;
+            margin-top:0%;
+        }
+        .menu-container {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .menu-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .book-item {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .book-item:hover {
+            transform: scale(1.05);
+        }
+        .book-title {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .book-price {
+            font-size: 18px;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .quantity-selector {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .quantity-selector button {
+            padding: 10px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quantity-selector button:hover {
+            background-color: #0056b3;
+        }
+        .quantity-display {
+            margin: 0 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .total-price {
+            font-size: 18px;
+            color: #28a745;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .buy-button-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .buy-button {
+            background-color: #17a2b8;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .buy-button:hover {
+            background-color: #138496;
+        }
+        .summary-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+        .summary-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .summary-item span {
+            font-size: 16px;
+        }
+        .summary-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin-top: 20px;
+        }
+        /* QR Code Section */
+        .qr-container {
+            text-align: center;
+            margin-top: 40px;
+            display: none;
+        }
+        #qr-code {
+            margin-top: 20px;
+            display: inline-block;
+        }
+        .upi-id-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .upi-id-container input {
+            padding: 10px;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .make-payment-button {
+            background-color: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .make-payment-button:hover {
+            background-color: #218838;
+        }
+        /* Home Button */
+        .home-button-container {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .home-button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="text">
+        <div class="text-2" align="center">MBCET STORE</div>
+        <div class="text-3" align="center">Where you can find everything</div>
+        <div class="text-4" align="center">Find what you need</div>
+    </div>
+
+    <div class="menu-container" id="menu-page">
+        <div class="menu-header">
+            <h1>Available Items</h1>
+            <p>Select the items to buy or borrow</p>
+        </div>
+
+        <div class="book-list">
+            <!-- EC Assignment Book -->
+            <div class="book-item" data-price="25" id="ec-item">
+                <div class="book-title">EC Assignment Book</div>
+                <div class="quantity-selector">
+                    <button onclick="updateQuantity('ec', -1)">-</button>
+                    <div class="quantity-display" id="ec-quantity">0</div>
+                    <button onclick="updateQuantity('ec', 1)">+</button>
+                </div>
+                <div class="book-price">Rs 25</div>
+                <div class="total-price" id="ec-total-price">Total: Rs 0</div>
+                <div class="remaining-stock" id="ec-stock">Remaining: 25</div>
+            </div>
+
+            <!-- Pen -->
+            <div class="book-item" data-price="4" id="pen-item">
+                <div class="book-title">Pen</div>
+                <div class="quantity-selector">
+                    <button onclick="updateQuantity('pen', -1)">-</button>
+                    <div class="quantity-display" id="pen-quantity">0</div>
+                    <button onclick="updateQuantity('pen', 1)">+</button>
+                </div>
+                <div class="book-price">Rs 4</div>
+                <div class="total-price" id="pen-total-price">Total: Rs 0</div>
+                <div class="remaining-stock" id="pen-stock">Remaining: 25</div>
+            </div>
+
+            <!-- Records -->
+            <div class="book-item" data-price="30" id="record-item">
+                <div class="book-title">Records</div>
+                <div class="quantity-selector">
+                    <button onclick="updateQuantity('record', -1)">-</button>
+                    <div class="quantity-display" id="record-quantity">0</div>
+                    <button onclick="updateQuantity('record', 1)">+</button>
+                </div>
+                <div class="book-price">Rs 30</div>
+                <div class="total-price" id="record-total-price">Total: Rs 0</div>
+                <div class="remaining-stock" id="record-stock">Remaining: 25</div>
+            </div>
+
+            <!-- Record without Graph -->
+            <div class="book-item" data-price="20" id="record-without-graph-item">
+                <div class="book-title">Record without Graph</div>
+                <div class="quantity-selector">
+                    <button onclick="updateQuantity('record-without-graph', -1)">-</button>
+                    <div class="quantity-display" id="record-without-graph-quantity">0</div>
+                    <button onclick="updateQuantity('record-without-graph', 1)">+</button>
+                </div>
+                <div class="book-price">Rs 20</div>
+                <div class="total-price" id="record-without-graph-total-price">Total: Rs 0</div>
+                <div class="remaining-stock" id="record-without-graph-stock">Remaining: 25</div>
+            </div>
+        </div>
+
+        <div class="buy-button-container">
+            <button class="buy-button" onclick="showCart()">Proceed to Cart</button>
+        </div>
+    </div>
+
+    <div class="summary-container" id="summary-page" style="display:none;">
+        <h2>Cart Summary</h2>
+        <div class="summary-item">
+            <span>EC Assignment Book (Rs 25)</span>
+            <span id="ec-summary">0 x Rs 25</span>
+        </div>
+        <div class="summary-item">
+            <span>Pen (Rs 4)</span>
+            <span id="pen-summary">0 x Rs 4</span>
+        </div>
+        <div class="summary-item">
+            <span>Records (Rs 30)</span>
+            <span id="record-summary">0 x Rs 30</span>
+        </div>
+        <div class="summary-item">
+            <span>Record without Graph (Rs 20)</span>
+            <span id="record-without-graph-summary">0 x Rs 20</span>
+        </div>
+        <div class="summary-total">
+            <span>Total: Rs </span><span id="total-price">0</span>
+        </div>
+        <div class="qr-container" id="qr-page">
+            <h3>Scan QR Code to Pay</h3>
+            <div id="qr-code"></div>
+        </div>
+        <div class="upi-id-container" id="upi-page">
+            <input type="text" id="upi-id" placeholder="Enter your UPI ID" />
+            <button class="make-payment-button" onclick="completePayment()">Complete Payment</button>
+        </div>
+        <div class="home-button-container" id="home-button-container">
+            <button class="home-button" onclick="goHome()">Go to Menu</button>
+        </div>
+    </div>
+
+    <script>
+        let stock = {
+            ec: 25,
+            pen: 25,
+            record: 25,
+            'record-without-graph': 25
+        };
+        
+        let cart = {
+            ec: 0,
+            pen: 0,
+            record: 0,
+            'record-without-graph': 0
+        };
+
+        function updateQuantity(item, delta) {
+            const stockElement = document.getElementById(${item}-stock);
+            const quantityElement = document.getElementById(${item}-quantity);
+            const totalPriceElement = document.getElementById(${item}-total-price);
+            const maxStock = stock[item];
+            
+            if (cart[item] + delta >= 0 && cart[item] + delta <= maxStock) {
+                cart[item] += delta;
+                quantityElement.textContent = cart[item];
+                totalPriceElement.textContent = Total: Rs ${cart[item] * (item === 'ec' ? 25 : item === 'pen' ? 4 : item === 'record' ? 30 : 20)};
+                stockElement.textContent = Remaining: ${maxStock - cart[item]};
+            }
+        }
+
+        function showCart() {
+            let total = 0;
+            document.getElementById("ec-summary").textContent = ${cart.ec} x Rs 25;
+            document.getElementById("pen-summary").textContent = ${cart.pen} x Rs 4;
+            document.getElementById("record-summary").textContent = ${cart.record} x Rs 30;
+            document.getElementById("record-without-graph-summary").textContent = ${cart['record-without-graph']} x Rs 20;
+            total = cart.ec * 25 + cart.pen * 4 + cart.record * 30 + cart['record-without-graph'] * 20;
+            document.getElementById("total-price").textContent = total;
+
+            if (total > 0) {
+                document.getElementById("summary-page").style.display = "block";
+                document.getElementById("menu-page").style.display = "none";
+            }
+        }
+
+        function completePayment() {
+            const upiId = document.getElementById("upi-id").value;
+            if (upiId) {
+                // Update stock after payment
+                stock.ec -= cart.ec;
+                stock.pen -= cart.pen;
+                stock.record -= cart.record;
+                stock['record-without-graph'] -= cart['record-without-graph'];
+
+                // Clear the cart
+                cart.ec = 0;
+                cart.pen = 0;
+                cart.record = 0;
+                cart['record-without-graph'] = 0;
+
+                // Update UI
+                document.getElementById("ec-quantity").textContent = 0;
+                document.getElementById("pen-quantity").textContent = 0;
+                document.getElementById("record-quantity").textContent = 0;
+                document.getElementById("record-without-graph-quantity").textContent = 0;
+                document.getElementById("ec-total-price").textContent = "Total: Rs 0";
+                document.getElementById("pen-total-price").textContent = "Total: Rs 0";
+                document.getElementById("record-total-price").textContent = "Total: Rs 0";
+                document.getElementById("record-without-graph-total-price").textContent = "Total: Rs 0";
+
+                document.getElementById("upi-page").style.display = "none";
+                document.getElementById("qr-page").style.display = "none";
+                document.getElementById("home-button-container").style.display = "block";
+
+                alert("Payment successful!");
+            } else {
+                alert("Please enter your UPI ID");
+            }
+        }
+
+        function goHome() {
+            document.getElementById("summary-page").style.display = "none";
+            document.getElementById("menu-page").style.display = "block";
+            document.getElementById("home-button-container").style.display = "none";
+        }
+    </script>
+</body>
+</html>
