@@ -327,25 +327,25 @@
         };
 
         function updateQuantity(item, delta) {
-            const stockElement = document.getElementById(${item}-stock);
-            const quantityElement = document.getElementById(${item}-quantity);
-            const totalPriceElement = document.getElementById(${item}-total-price);
+            const stockElement = document.getElementById(`${item}-stock`);
+            const quantityElement = document.getElementById(`${item}-quantity`);
+            const totalPriceElement = document.getElementById(`${item}-total-price`);
             const maxStock = stock[item];
             
             if (cart[item] + delta >= 0 && cart[item] + delta <= maxStock) {
                 cart[item] += delta;
                 quantityElement.textContent = cart[item];
-                totalPriceElement.textContent = Total: Rs ${cart[item] * (item === 'ec' ? 25 : item === 'pen' ? 4 : item === 'record' ? 30 : 20)};
-                stockElement.textContent = Remaining: ${maxStock - cart[item]};
+                totalPriceElement.textContent = `Total: Rs ${cart[item] * (item === 'ec' ? 25 : item === 'pen' ? 4 : item === 'record' ? 30 : 20)}`;
+                stockElement.textContent = `Remaining: ${maxStock - cart[item]}`;
             }
         }
 
         function showCart() {
             let total = 0;
-            document.getElementById("ec-summary").textContent = ${cart.ec} x Rs 25;
-            document.getElementById("pen-summary").textContent = ${cart.pen} x Rs 4;
-            document.getElementById("record-summary").textContent = ${cart.record} x Rs 30;
-            document.getElementById("record-without-graph-summary").textContent = ${cart['record-without-graph']} x Rs 20;
+            document.getElementById("ec-summary").textContent = `${cart.ec} x Rs 25`;
+            document.getElementById("pen-summary").textContent = `${cart.pen} x Rs 4`;
+            document.getElementById("record-summary").textContent = `${cart.record} x Rs 30`;
+            document.getElementById("record-without-graph-summary").textContent = `${cart['record-without-graph']} x Rs 20`;
             total = cart.ec * 25 + cart.pen * 4 + cart.record * 30 + cart['record-without-graph'] * 20;
             document.getElementById("total-price").textContent = total;
 
